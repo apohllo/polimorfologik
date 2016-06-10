@@ -7,11 +7,24 @@ all: polimorfologik.txt polish.dict polish_synth.dict polish_tags.txt
 # NOTE: get polimorfologik.txt directly from sourceforge:
 # http://sourceforge.net/projects/morfologik/files,
 # as described here: https://github.com/morfologik/morfologik-scripts/issues/1
-polimorfologik.txt: eksport.tab brev-morfologik.txt
-	sort -u eksport.tab brev-morfologik.txt | gawk -f join_tags.awk > polimorfologik.txt
+#
+#polimorfologik.txt: eksport.tab brev-morfologik.txt
+#	sort -u eksport.tab brev-morfologik.txt | gawk -f join_tags.awk > polimorfologik.txt
 
 pol.txt: polimorfologik.txt
 	java -jar $(morfologik) tab2morph -inf -i polimorfologik.txt -o pol.txt
+
+polimorfologik-tab.txt: polimorfologik.txt
+	sed -e 's/;/\t/' polimorfologik.txt > polimorfologik-tab.txt
+
+polimorfologik-downcase.txt: polimorfologik-tab.txt
+	sed -e 's/.*/\L&/' polimorfologik.txt > polimorfologik-downcase.txt
+
+polimorfologik-nobrev.txt: polimorfologik-downcase.txt
+	sed '/\<brev:/d' polimorfologik-downcase.txt > polimorfologik-nobrev.txt
+
+polimorfologik-columns.txt: polimorfologik-nobrev.txt
+	gawk -f switch_columns.awk polimorfologik-nobrev.txt > polimorfologik-columns.txt
 
 polish.dict: pol.txt	
 	java -jar -Xmx700m $(morfologik) fsa_build -i pol.txt -f fsa5 -o polish.dict
