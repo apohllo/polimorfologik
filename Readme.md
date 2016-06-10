@@ -3,7 +3,7 @@
 This is a custom build of Morfologik dictionary.
 The following make tasks are introduced:
 * all forms can be downcased
-* all abbreviation are removed
+* all abbreviations are removed
 * tab is a separator instead of a semicolon
 
 The primary reason for this repository is the need to use an old version of SOLR
